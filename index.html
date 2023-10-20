@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Number Facts</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        
+    </head>
+    <body>
+        <h1>Number Facts</h1>
+        <ul id="numberFacts"></ul>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            // an array of favorite numbers
+            const favoriteNumber = [45, 7, 11, 16, 22];
+
+            // function to fetch a fact about favorite number
+            function fetchFavoriteNumberFact(number) {
+                return axios.get(`https://numbersapi.com/{number}?json`);
+            }
+
+            // get facts for multiple numbers in a single request
+            const requests = favoriteNumber.map(fetchFavoriteNumberFact);
+
+            // execute all the requests in parallel using Promise.all
+            Promise.all(requests)
+                .then(responses => {
+                    const numberFactsList = document.getElementById('numberFacts');
+                    responses.forEach(response => {
+                        const fact = response.data.text;
+                        const listItem = document.createElement('li');
+                        listItem.textContent = fact;
+                        numberFactsList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        </script>
+    </body>
+</html>
